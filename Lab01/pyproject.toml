@@ -1,3 +1,11 @@
 [build-system]
-requires = ['setuptools>=42']
-build-backend = 'setuptools.build_meta'
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CosinDistance"
+version = "1.0"
+authors = [{name = "Pavel Filippenko", email="filippenko.ps@phystech.edu"}]
+readme = "README.md"
+requires-python = ">=3.8"
+['version']

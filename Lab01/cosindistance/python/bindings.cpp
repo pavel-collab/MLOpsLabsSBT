@@ -1,17 +1,17 @@
-#include "LinAlg.hpp"
+#include "CosinDistance.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(linalg_core, m) {
+PYBIND11_MODULE(cosin_distance, m) {
   m.doc() = R"doc(
-    Python bindings for LinAlg library
+    Python bindings for CosinDistance library
   )doc";
 
-  py::class_<LinAlg>(m, "LinAlg")
-      .def_static("GetVectorNorm", &LinAlg::GetVectorNorm, R"doc(
+  py::class_<CosinDistance>(m, "CosinDistance")
+      .def_static("GetVectorNorm", &CosinDistance::GetVectorNorm, R"doc(
           Compute vector norm using pure C++.
 
           Parameters:
@@ -22,7 +22,7 @@ PYBIND11_MODULE(linalg_core, m) {
             float
                 Norm of the vector.
       )doc")
-      .def_static("GetCosDistance", &LinAlg::GetCosDistance, R"doc(
+      .def_static("GetCosDistance", &CosinDistance::GetCosDistance, R"doc(
           Compute cosin distance between two vectors using pure C++.
 
           Parameters:
