@@ -3,7 +3,6 @@
 #include <cassert>
 #include <cmath>
 
-//TODO: maybe it can be more optimal with using std::asynch https://ru.stackoverflow.com/questions/1263021/
 double CosinDistance::GetVectorNorm(const std::vector<double> &vec)
 {
     double res = 0;
@@ -14,6 +13,7 @@ double CosinDistance::GetVectorNorm(const std::vector<double> &vec)
 
 double CosinDistance::GetCosDistance(const std::vector<double> &vec1, const std::vector<double> &vec2)
 {
+    //TODO: what if one of the vectors is 0
     assert(vec1.size() == vec2.size());
 
     float scalar_multiplication = 0;
