@@ -8,7 +8,7 @@
 double CosinDistance::get_vector_norm(const std::vector<double> &vec)
 {
     double res = 0;
-    res = std::inner_product(vec.begin(), vec.end(), vec.begin(), 0);
+    res = std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0);
     return res;
 }
 
@@ -24,7 +24,7 @@ double CosinDistance::get_cos_distance(const std::vector<double> &vec1, const st
     assert(vec1_norm != 0);
     assert(vec2_norm != 0);
 
-    float scalar_multiplication = std::inner_product(vec1.begin(), vec1.end(), vec2.begin(), 0);
+    double scalar_multiplication = std::inner_product(vec1.begin(), vec1.end(), vec2.begin(), 0.0);
 
     return scalar_multiplication / (vec1_norm * vec2_norm);
 }

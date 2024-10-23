@@ -3,8 +3,10 @@
 
 TEST(CosinDistanceTests, VectorNorm) {
   std::vector<double> a = {1.0, 2.0, 3.0};
+  std::vector<double> b = {0.5, 0.2, 0.1};
 
   EXPECT_TRUE(std::abs(CosinDistance::get_vector_norm(a) - 14.0) < 1e-2);
+  EXPECT_TRUE(std::abs(CosinDistance::get_vector_norm(b) - 0.3) < 1e-2);
 }
 
 TEST(CosinDistanceTests, CosinDistance) {
