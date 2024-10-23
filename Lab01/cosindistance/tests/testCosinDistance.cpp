@@ -1,6 +1,12 @@
 #include "CosinDistance.hpp"
 #include <gtest/gtest.h>
 
+TEST(CosinDistanceTests, VectorNorm) {
+  std::vector<double> a = {1.0, 2.0, 3.0};
+
+  EXPECT_TRUE(std::abs(CosinDistance::get_vector_norm(a) - 14.0) < 1e-2);
+}
+
 TEST(CosinDistanceTests, CosinDistance) {
   std::vector<double> a = {1.0, 2.0, 3.0};
   std::vector<double> b = {4.0, 5.0, 6.0};
