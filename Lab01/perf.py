@@ -22,5 +22,9 @@ if __name__ == "__main__":
     for length in [5, 25, 125, 625, 3125, 15625, 78125]:
         vec1 = gen_valid_random_vec(length)
         vec2 = gen_valid_random_vec(length)
-        print("Cosin distance (Pure C++),     size={0}: {1} seconds".format(length, test_timings(CosinDistance.get_cos_distance, vec1, vec2)))
-        print("Cosin distance (Python scipy), size={0}: {1} seconds\n".format(length, test_timings(distance.cosine, vec1, vec2)))
+        
+        print("\tCosin distance (Pure C++),     size={0}: res={1}".format(length, CosinDistance.get_cos_distance(vec1, vec2)))
+        print("\tCosin distance (Python scipy), size={0}: res={1}\n".format(length, 1 - distance.cosine(vec1, vec2))) 
+
+        print("\tCosin distance (Pure C++),     size={0}: {1} seconds".format(length, test_timings(CosinDistance.get_cos_distance, vec1, vec2)))
+        print("\tCosin distance (Python scipy), size={0}: {1} seconds\n".format(length, test_timings(distance.cosine, vec1, vec2)))  
