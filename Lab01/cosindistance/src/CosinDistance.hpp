@@ -4,8 +4,8 @@
 
 class CosinDistance {
 public:
-    static double GetCosDistance(const std::vector<double> &vec1, 
+    static double get_cos_distance(const std::vector<double> &vec1, 
                                  const std::vector<double> &vec2);
 
-    static double GetVectorNorm(const std::vector<double> &vec);
+    static double get_vector_norm(const std::vector<double> &vec);
 };

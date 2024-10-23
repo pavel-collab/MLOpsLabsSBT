@@ -11,7 +11,7 @@ PYBIND11_MODULE(cosin_distance, m) {
   )doc";
 
   py::class_<CosinDistance>(m, "CosinDistance")
-      .def_static("GetVectorNorm", &CosinDistance::GetVectorNorm, R"doc(
+      .def_static("get_vector_norm", &CosinDistance::get_vector_norm, R"doc(
           Compute vector norm using pure C++.
 
           Parameters:
@@ -22,7 +22,7 @@ PYBIND11_MODULE(cosin_distance, m) {
             float
                 Norm of the vector.
       )doc")
-      .def_static("GetCosDistance", &CosinDistance::GetCosDistance, R"doc(
+      .def_static("get_cos_distance", &CosinDistance::get_cos_distance, R"doc(
           Compute cosin distance between two vectors using pure C++.
 
           Parameters:

@@ -15,7 +15,7 @@ PYTHON_DIR=cosindistance/python
 all: CosinDistance test
 
 CosinDistance: $(PYTHON_DIR)/bindings.o $(SRC_DIR)/CosinDistance.o
-	$(CXX) $^ -o $(PYTHON_DIR)/cosin_core`python3-config --extension-suffix` $(PY_LDFLAGS) $(CXXFLAGS)
+	$(CXX) $^ -o $(PYTHON_DIR)/cosin_distance`python3-config --extension-suffix` $(PY_LDFLAGS) $(CXXFLAGS)
 
 $(PYTHON_DIR)/bindings.o: $(PYTHON_DIR)/bindings.cpp $(SRC_DIR)/CosinDistance.hpp
 	$(CXX) $(CXXFLAGS) -fPIC -c $< -o $@
@@ -33,4 +33,4 @@ run_tests: test
 	./$(TESTS_DIR)/testCosinDistance
 
 clean:
-	rm -f $(PYTHON_DIR)/*.o $(SRC_DIR)/*.o $(TESTS_DIR)/*.o $(PYTHON_DIR)/cosin_core`python3-config --extension-suffix` $(TESTS_DIR)/testCosinDistance
+	rm -f $(PYTHON_DIR)/*.o $(SRC_DIR)/*.o $(TESTS_DIR)/*.o $(PYTHON_DIR)/cosin_distance`python3-config --extension-suffix` $(TESTS_DIR)/testCosinDistance

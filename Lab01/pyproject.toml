@@ -3,9 +3,17 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "CosinDistance"
+name = "cosindistance"
 version = "1.0"
 authors = [{name = "Pavel Filippenko", email="filippenko.ps@phystech.edu"}]
 readme = "README.md"
 requires-python = ">=3.8"
 ['version']
+
+[tool.setuptools]
+packages = ["cosindistance"]
+
+[tool.setuptools.package-data]
+cosindistance = [
+    "python/*.so"
+]
