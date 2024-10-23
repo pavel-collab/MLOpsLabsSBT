@@ -1,3 +1,3 @@
-from .python import cosin_core as _cosin_core
+from .python import cosin_distance as _cosin_distance
 
-CosinDistance = _cosin_core.CosinDistance
+CosinDistance = _cosin_distance.CosinDistance
