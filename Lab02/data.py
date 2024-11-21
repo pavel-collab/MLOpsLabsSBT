@@ -8,15 +8,16 @@ import datasets
 import pytorch_lightning as pl
 
 from datasets import load_dataset
-from transformers import AutoTekenizer
+from transformers import AutoTokenizer
 
 class MyDataModule(pl.LightningDataModule):
     def __init__(self, 
                  model_name="google-bert/bert-base-uncased", #! could be hydra parametr
                  batch_size=32):
-        
+        super().__init__()
+
         self.batch_size = batch_size
-        self.tokenizer = AutoTekenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     def prepare_data(self):
         dataset = load_dataset("glue", "cola") #? dataset name could be hydra parametr, also it could be class constructor parametr
@@ -32,12 +33,12 @@ class MyDataModule(pl.LightningDataModule):
     '''
     def tokenize_data(self, example):
         return self.tokenizer(example["sentence"],
-                              trunkation=True, # отвечает за обрезание слишком длинного предложения
+                              truncation=True, # отвечает за обрезание слишком длинного предложения
                               padding="max_length", # отвечает за дополнение слишком короткого предложения
                               max_length=512)
     
     def setup(self, stage=None):
-        if stage == "fir" or stage == None:
+        if stage == "fit" or stage == None:
             '''
             Выполняем предобработку данных для обучения: получаем эмбеддинги
             и делим данные по батчам.
@@ -59,7 +60,7 @@ class MyDataModule(pl.LightningDataModule):
             происходить стохастический градиентный спуск, она нужна только чтобы посчитать промежуточную
             функцию потерь.
             '''
-            self.validation_dataset = self.validation_dataset.map(self.tokenize_data, batched=False)
+            self.validation_dataset = self.validation_dataset.map(self.tokenize_data, batched=True)
             self.validation_dataset.set_format(type="torch",
                                                columns=["input_ids", "attention_mask", "label"])
     
@@ -68,11 +69,12 @@ class MyDataModule(pl.LightningDataModule):
     который будет выдавать батчи данных один за другим.
     '''
     def train_dataloader(self):
-        return torch.utils.data.DataLoader(self.train_data,
+        return torch.utils.data.DataLoader(self.train_dataset,
                                            batch_size=self.batch_size,
                                            shuffle=True)
     
-    def validation_dataloader(self):
-        return torch.utils.data.DataLoader(self.validation_data,
+    # очень важно, чтобы метод имел именно такое название =)
+    def val_dataloader(self):
+        return torch.utils.data.DataLoader(self.validation_dataset,
                                            batch_size=self.batch_size,
                                            shuffle=False)

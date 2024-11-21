@@ -12,8 +12,15 @@ from data import MyDataModule
 from model import MyModel
 
 def main():
+     # инициализируем объект для работы с данными
     data = MyDataModule()
-    model = MyDataModule()
+    # выкачиваем данные для обучения и валидации
+    data.prepare_data()
+    # делаем препроцессинг
+    data.setup()
+    #TODO: вывести справочную информацию о датасете
+
+    model = MyModel()
 
     '''
     Иногда обучение модели может прерваться или пойти не по плану
@@ -23,6 +30,7 @@ def main():
     вытащить checkpoint с наилучшей версией обученной модели.
     '''
     checkpoint_callback = ModelCheckpoint(dirpath="./checkpoints",
+                                          save_top_k=2,
                                           monitor="validation_loss",
                                           mode="min")
     
@@ -36,25 +44,18 @@ def main():
                                             mode="min")
     
     trainer = pl.Trainer(default_root_dir="logs", #?
-                         gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epoch=5,
+                        #  accelerator="auto",
+                        accelerator="cpu",
+                         max_epochs=5,
                          fast_dev_run=False, #?
-                         logger=pl.loggers.TansorBoardLogger("logs", name="test", version=1), # можно вставить свой логгер
+                         logger=pl.loggers.TensorBoardLogger("logs", name="cola", version=1), # можно вставить свой логгер
                          callbacks=[checkpoint_callback, early_stopping_callback])
     
     try:
         trainer.fit(model, data)
-    except RuntimeError:
-        print("[ERROR] model training was interrupted cz of some error")
+    except RuntimeError as ex:
+        print(f"[ERROR] model training was interrupted cz of error {ex}")
 
 if __name__ == '__main__':
-    # инициализируем объект для работы с данными
-    data_model = MyDataModule()
-    # выкачиваем данные для обучения и валидации
-    data_model.prepare_data()
-    # делаем препроцессинг
-    data_model.setup()
-    #TODO: вывести справочную информацию о датасете
-
     # вызываем основной цикл обучения
     main()

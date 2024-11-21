@@ -23,7 +23,7 @@ class MyModel(pl.LightningModule):
         self.save_hyperparameters() 
         self.num_classes = 2
 
-        self.model = AutoModel.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(model_name)
         '''
         К уже имеющейся языковой модели добавляем дополнительно 
         1 полносвязный выходной слой. Он будет преобразовывать вектор

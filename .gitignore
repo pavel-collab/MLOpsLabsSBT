@@ -3,3 +3,4 @@ a.out
 *.o
 *.so
 .venv
+__pycache__
