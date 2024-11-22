@@ -4,3 +4,8 @@ a.out
 *.so
 .venv
 __pycache__
+data
+wandb
+.logs
+.hydra
+train.log
