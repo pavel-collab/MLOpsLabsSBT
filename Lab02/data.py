@@ -12,7 +12,7 @@ from transformers import AutoTokenizer
 
 class MyDataModule(pl.LightningDataModule):
     def __init__(self, 
-                 model_name="google-bert/bert-base-uncased", #! could be hydra parametr
+                 model_name="google/bert_uncased_L-2_H-128_A-2", #! could be hydra parametr
                  batch_size=32):
         super().__init__()
 

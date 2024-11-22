@@ -12,7 +12,7 @@ from sklearn.metrics import accuracy_score #TODO: добавить еще мет
 
 class MyModel(pl.LightningModule):
     def __init__(self,
-                 model_name="google-bert/bert-base-uncased", #! повторяется 2 раза, точно сделать гиперпараметром
+                 model_name="google/bert_uncased_L-2_H-128_A-2", #! повторяется 2 раза, точно сделать гиперпараметром
                  lr=1e-3):
         super(MyModel, self).__init__()
 
