@@ -11,8 +11,13 @@ from transformers import AutoModel
 from sklearn.metrics import accuracy_score #TODO: добавить еще метрик для логгирования
 
 class MyModel(pl.LightningModule):
+    '''
+    Заметим, что здесь задаются аргументы конструктора по умолчанию.
+    При использовании класса в тренеровочном цикле можно будет поменять
+    эти гиперпараметры вручную или с помощью Hydra config.
+    '''
     def __init__(self,
-                 model_name="google/bert_uncased_L-2_H-128_A-2", #! повторяется 2 раза, точно сделать гиперпараметром
+                 model_name="google/bert_uncased_L-2_H-128_A-2",
                  lr=1e-3):
         super(MyModel, self).__init__()
 

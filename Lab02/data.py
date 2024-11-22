@@ -11,13 +11,21 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 
 class MyDataModule(pl.LightningDataModule):
+    '''
+    Заметим, что здесь задаются аргументы конструктора по умолчанию.
+    При использовании класса в тренеровочном цикле можно будет поменять
+    эти гиперпараметры вручную или с помощью Hydra config.
+    '''
     def __init__(self, 
-                 model_name="google/bert_uncased_L-2_H-128_A-2", #! could be hydra parametr
-                 batch_size=32):
+                 model_name="google/bert_uncased_L-2_H-128_A-2",
+                 tokenizer_name="google/bert_uncased_L-2_H-128_A-2",
+                 batch_size=32,
+                 max_length=128):
         super().__init__()
 
         self.batch_size = batch_size
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.max_length = max_length
 
     def prepare_data(self):
         dataset = load_dataset("glue", "cola") #? dataset name could be hydra parametr, also it could be class constructor parametr
@@ -35,7 +43,7 @@ class MyDataModule(pl.LightningDataModule):
         return self.tokenizer(example["sentence"],
                               truncation=True, # отвечает за обрезание слишком длинного предложения
                               padding="max_length", # отвечает за дополнение слишком короткого предложения
-                              max_length=512)
+                              max_length=self.max_length)
     
     def setup(self, stage=None):
         if stage == "fit" or stage == None:
