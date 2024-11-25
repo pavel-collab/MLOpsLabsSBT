@@ -24,7 +24,7 @@ class MyDataModule(pl.LightningDataModule):
         super().__init__()
 
         self.batch_size = batch_size
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
         self.max_length = max_length
 
     def prepare_data(self):

@@ -18,8 +18,11 @@ class MyModel(pl.LightningModule):
     '''
     def __init__(self,
                  model_name="google/bert_uncased_L-2_H-128_A-2",
+                 dropout=0.2,
+                 weight_decay=0.02,
                  lr=1e-3):
         super(MyModel, self).__init__()
+        self.save_hyperparameters()
 
         '''
         вспомогательный метод, позволяет, в частности,
@@ -27,6 +30,7 @@ class MyModel(pl.LightningModule):
         '''
         self.save_hyperparameters() 
         self.num_classes = 2
+        self.dropout = dropout
 
         self.model = AutoModel.from_pretrained(model_name)
         '''
@@ -37,12 +41,17 @@ class MyModel(pl.LightningModule):
         '''
         self.final_layer = nn.Linear(self.model.config.hidden_size, 
                                      self.num_classes)
+        # сделаем еще один слой droput
+        self.dropout_layer = torch.nn.Dropout(p=self.dropout)    
         
     def forward(self, input_ids, attention_mask):
         # получаем выход языковой модели
         outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
         # получаем последний вектор скрытого состояния
         hid_vec = outputs.last_hidden_state[:, 0]
+
+        hid_vec = self.dropout_layer(hid_vec)
+
         # получаем логиты с помощью полносвязного слоя
         logits = self.final_layer(hid_vec)
         return logits
@@ -68,4 +77,4 @@ class MyModel(pl.LightningModule):
         self.log("validation_accuracy", validation_accuracy, prog_bar=True)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=self.hparams["lr"])
+        return torch.optim.Adam(self.parameters(), lr=self.hparams["lr"], weight_decay=self.hparams["weight_decay"])

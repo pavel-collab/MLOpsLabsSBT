@@ -1,6 +1,8 @@
 max_epochs: 3
 accelerator: cpu
 log_every_n_steps: 1
-deterministic: true
-limit_train_batches: 0.25
-limit_val_batches: ${training.limit_train_batches}
+precision: 16-mixed
+grad_accum_steps: 4
+val_check_interval: 1.0
+full_deterministic_mode: false
+gradient_clip_val: 1.0
