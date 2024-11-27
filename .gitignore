@@ -10,3 +10,4 @@ wandb
 .hydra
 train.log
 outputs
+*.onnx
