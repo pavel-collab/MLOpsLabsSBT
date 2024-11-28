@@ -1,6 +1,8 @@
 import torch
 import hydra
-import os
+
+import numpy as np
+import onnxruntime as ort
 
 from data import MyDataModule
 from model import MyModel
@@ -29,12 +31,15 @@ def convert_model(cfg):
         "attention_mask": input_batch["attention_mask"][0].unsqueeze(0),
     }
 
+    tokens_tensor = input_sample["input_ids"].to("cpu")
+    attention_mask = input_sample["attention_mask"].to("cpu")
+
     # Export the model
     torch.onnx.export(
         model,  # model being run
         (
-            input_sample["input_ids"].to("cpu"),
-            input_sample["attention_mask"].to("cpu"),
+            tokens_tensor,
+            attention_mask,
         ),  # model input (or a tuple for multiple inputs)
         f"{root_dir}/model.onnx",  # where to save the model (can be a file or file-like object)
         export_params=True,
@@ -47,6 +52,19 @@ def convert_model(cfg):
             "output": {0: "batch_size"},
         },
     )
+
+
+    if cfg.artefacts.onnx_validation == True:
+        original_embeddings = model(tokens_tensor, attention_mask).detach().numpy()    
+        ort_inputs = {
+            "input_ids": tokens_tensor.numpy(),
+            "attention_mask": attention_mask.numpy()
+        }
+        ort_session = ort.InferenceSession("./model.onnx")
+        onnx_embeddings = ort_session.run(None, ort_inputs)[0]
+
+        assert np.allclose(original_embeddings, onnx_embeddings)
+
 
 if __name__ == "__main__":
     convert_model()

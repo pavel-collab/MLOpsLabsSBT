@@ -1,1 +1,2 @@
 experiment_name: example-experiment
+onnx_validation: True
