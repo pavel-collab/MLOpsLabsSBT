@@ -1,17 +1,17 @@
 name: "onnx-bert-uncased"
 platform: "onnxruntime_onnx"
-max_batch_size: 8
+max_batch_size: 1
 
 input [
     {
         name: "input_ids"
         data_type: TYPE_INT64
-        dims: [ 16 ]
+        dims: [128]
     },
     {
         name: "attention_mask"
         data_type: TYPE_INT64
-        dims: [ 16 ]
+        dims: [128]
     }
 ]
 
@@ -19,7 +19,7 @@ output [
     {
         name: "output"
         data_type: TYPE_FP32
-        dims: [ 2 ]
+        dims: [2]
     }   
 ]
 

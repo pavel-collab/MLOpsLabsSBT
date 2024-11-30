@@ -22,20 +22,20 @@ def run_triton_inderence(cfg):
     input_batch = next(iter(data.train_dataloader()))
 
     #! Здесь могут быть проблемы с размерностями, исследовать внутр. структуру input_batch['input_ids']
-    input_ids = httpclient.InferInput("input_ids", input_batch["input_ids"].shape, "INT32")
-    attention_mask = httpclient.InferInput("attention_mask", input_batch["attention_mask"].shape, "INT32")
+    input_ids = httpclient.InferInput("input_ids", input_batch["input_ids"][0].shape, "INT64")
+    attention_mask = httpclient.InferInput("attention_mask", input_batch["attention_mask"][0].shape, "INT64")
 
     triton_server_url = f"localhost:{PORT}"
     client = httpclient.InferenceServerClient(url=triton_server_url)
 
     #! также, проследить, правильную ли размерность мы здесь выдаем
-    input_ids.set_data_from_numpy(input_batch["input_ids"][0].unsqueeze(0))
-    attention_mask.set_data_from_numpy(input_batch["attention_mask"][0].unsqueeze(0))
+    input_ids.set_data_from_numpy(np.array(input_batch["input_ids"][0]).astype('int64'))
+    attention_mask.set_data_from_numpy(np.array(input_batch["attention_mask"][0]).astype('int64'))
 
-    output = httpclient.InferRequestedOutput("logits")
+    output = httpclient.InferRequestedOutput("output")
 
     response = client.infer(
-        model_name="hugging_face_model",
+        model_name="onnx-bert-uncased",
         inputs=[input_ids, attention_mask],
         outputs=[output]
     )
