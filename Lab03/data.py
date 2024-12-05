@@ -96,14 +96,17 @@ class MyDataModule(pl.LightningDataModule):
                                            batch_size=self.batch_size,
                                            shuffle=False)
     
-    def sample_random_items(self, items_num=1):
-        dataloader = self.val_dataloader
-        # Сбор всех данных в список
-        all_sentences = []
-        for batch in dataloader:
-            all_sentences.extend(batch)  # Добавляем батчи в общий список
+    def sample_random_item(self):
+        dataloader = self.val_dataloader()
+        random_batch_num = len(dataloader)
+        
+        while random_batch_num != 0:
+            random_batch_num -= 1
+            random_batch = next(iter(dataloader))
 
-        # Сэмплирование случайных предложений
-        num_samples = 3  # Количество случайных предложений
-        random_samples = random.sample(all_sentences, num_samples)
-        return random_samples
+        random_sentence_idx = random.randint(0, self.batch_size)
+        random_item = {'input_ids': random_batch['input_ids'][random_sentence_idx], 
+                       'attention_mask': random_batch['attention_mask'][random_sentence_idx], 
+                       'label': int(random_batch['label'][random_sentence_idx])}
+
+        return random_item

@@ -22,24 +22,24 @@ def run_triton_inderence(cfg):
         print("[Error] there are no labels to idx in data")
         return
     
-    random_sample_sentences = data.sample_random_items(items_num=1)
+    random_sample_sentence = data.sample_random_item()
 
-    decoded_sentence = data.tokenizer.decode(random_sample_sentences['input_ids'], skip_special_tokens=True)
-    true_label_idx = random_sample_sentences['label']
-    print(f"true label is {lables[true_label_idx]}")
-    print(f"sentence is {decoded_sentence}")
+    decoded_sentence = data.tokenizer.decode(random_sample_sentence['input_ids'], skip_special_tokens=True)
+    true_label_idx = random_sample_sentence['label']
+    print(f"true label is:\n\t{lables[true_label_idx]}")
+    print(f"sentence is:\n\t{decoded_sentence}")
 
-    input_ids = random_sample_sentences['input_ids'].reshape(1, -1)
-    attention_mask = random_sample_sentences['attention_mask'].reshape(1, -1)
+    d_input_ids = random_sample_sentence['input_ids'].reshape(1, -1)
+    d_attention_mask = random_sample_sentence['attention_mask'].reshape(1, -1)
 
-    input_ids = httpclient.InferInput("input_ids", input_ids.shape, "INT64")
-    attention_mask = httpclient.InferInput("attention_mask", attention_mask.shape, "INT64")
+    input_ids = httpclient.InferInput("input_ids", d_input_ids.shape, "INT64")
+    attention_mask = httpclient.InferInput("attention_mask", d_attention_mask.shape, "INT64")
 
     triton_server_url = f"localhost:{PORT}"
     client = httpclient.InferenceServerClient(url=triton_server_url)
 
-    input_ids.set_data_from_numpy(np.array(input_ids).astype('int64'))
-    attention_mask.set_data_from_numpy(np.array(attention_mask).astype('int64'))
+    input_ids.set_data_from_numpy(np.array(d_input_ids).astype('int64'))
+    attention_mask.set_data_from_numpy(np.array(d_attention_mask).astype('int64'))
 
     output = httpclient.InferRequestedOutput("output")
 
@@ -51,10 +51,12 @@ def run_triton_inderence(cfg):
 
     logits = response.as_numpy("output")
     scores = softmax(logits)[0]
-    predictions = []
+    predictions = {}
     for score, label in zip(scores, lables):
-        predictions.append({"label": label, "score": score})
-    print(predictions)
+        predictions[lables[label]] = score
+
+    predicted_label = max(predictions, key=predictions.get)
+    print(f"The model output is:\n\t{predictions}\nThe predicted label is:\n\t{predicted_label}")
 
 if __name__ == '__main__':
     run_triton_inderence()
