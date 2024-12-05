@@ -44,3 +44,10 @@ sudo apt-get install -y nvidia-container-toolkit
 # перезапускаем docker deamon
 sudo systemctl restart docker
 ```
+
+После того, как запустили triton inference server можно делать запросы к нему.
+Для этого предназначен скрипт client.py. В другом терминале запустите скрипт, который выберет из данных рандомное предложение, отправит его на сервер, там нейронка в inference режиме его обработает и пришлет ответ, который отобразится в терминале.
+
+```
+python3 client.py
+```
