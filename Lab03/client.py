@@ -9,8 +9,6 @@ PORT = "8000"
 
 @hydra.main(config_path="./conf", config_name="config", version_base="1.2")
 def run_triton_inderence(cfg):
-    lables = ["unacceptable", "acceptable"]
-
     data = MyDataModule(model_name=cfg.model.name,
                         tokenizer_name=cfg.model.tokenizer,
                         batch_size=cfg.processing.batch_size,
@@ -19,21 +17,29 @@ def run_triton_inderence(cfg):
     data.prepare_data()
     data.setup()
 
-    input_batch = next(iter(data.train_dataloader()))
+    lables = data.idx2label
+    if lables == None:
+        print("[Error] there are no labels to idx in data")
+        return
+    
+    random_sample_sentences = data.sample_random_items(items_num=1)
 
-    decoded_sentence = data.tokenizer.decode(input_batch['input_ids'][0], skip_special_tokens=True)
-    true_label = input_batch['label'][0]
-    print(f"true label is {true_label}")
+    decoded_sentence = data.tokenizer.decode(random_sample_sentences['input_ids'], skip_special_tokens=True)
+    true_label_idx = random_sample_sentences['label']
+    print(f"true label is {lables[true_label_idx]}")
     print(f"sentence is {decoded_sentence}")
 
-    input_ids = httpclient.InferInput("input_ids", input_batch["input_ids"][0].reshape(1, -1).shape, "INT64")
-    attention_mask = httpclient.InferInput("attention_mask", input_batch["attention_mask"][0].reshape(1, -1).shape, "INT64")
+    input_ids = random_sample_sentences['input_ids'].reshape(1, -1)
+    attention_mask = random_sample_sentences['attention_mask'].reshape(1, -1)
+
+    input_ids = httpclient.InferInput("input_ids", input_ids.shape, "INT64")
+    attention_mask = httpclient.InferInput("attention_mask", attention_mask.shape, "INT64")
 
     triton_server_url = f"localhost:{PORT}"
     client = httpclient.InferenceServerClient(url=triton_server_url)
 
-    input_ids.set_data_from_numpy(np.array(input_batch["input_ids"][0].reshape(1, -1)).astype('int64'))
-    attention_mask.set_data_from_numpy(np.array(input_batch["attention_mask"][0].reshape(1, -1)).astype('int64'))
+    input_ids.set_data_from_numpy(np.array(input_ids).astype('int64'))
+    attention_mask.set_data_from_numpy(np.array(attention_mask).astype('int64'))
 
     output = httpclient.InferRequestedOutput("output")
 
