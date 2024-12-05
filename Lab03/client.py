@@ -21,16 +21,21 @@ def run_triton_inderence(cfg):
 
     input_batch = next(iter(data.train_dataloader()))
 
+    decoded_sentence = data.tokenizer.decode(input_batch['input_ids'][0], skip_special_tokens=True)
+    true_label = input_batch['label'][0]
+    print(f"true label is {true_label}")
+    print(f"sentence is {decoded_sentence}")
+
     #! Здесь могут быть проблемы с размерностями, исследовать внутр. структуру input_batch['input_ids']
-    input_ids = httpclient.InferInput("input_ids", input_batch["input_ids"][0].shape, "INT64")
-    attention_mask = httpclient.InferInput("attention_mask", input_batch["attention_mask"][0].shape, "INT64")
+    input_ids = httpclient.InferInput("input_ids", input_batch["input_ids"][0].reshape(1, -1).shape, "INT64")
+    attention_mask = httpclient.InferInput("attention_mask", input_batch["attention_mask"][0].reshape(1, -1).shape, "INT64")
 
     triton_server_url = f"localhost:{PORT}"
     client = httpclient.InferenceServerClient(url=triton_server_url)
 
     #! также, проследить, правильную ли размерность мы здесь выдаем
-    input_ids.set_data_from_numpy(np.array(input_batch["input_ids"][0]).astype('int64'))
-    attention_mask.set_data_from_numpy(np.array(input_batch["attention_mask"][0]).astype('int64'))
+    input_ids.set_data_from_numpy(np.array(input_batch["input_ids"][0].reshape(1, -1)).astype('int64'))
+    attention_mask.set_data_from_numpy(np.array(input_batch["attention_mask"][0].reshape(1, -1)).astype('int64'))
 
     output = httpclient.InferRequestedOutput("output")
 
@@ -45,8 +50,7 @@ def run_triton_inderence(cfg):
     predictions = []
     for score, label in zip(scores, lables):
         predictions.append({"label": label, "score": score})
-    return predictions
+    print(predictions)
 
 if __name__ == '__main__':
-    prediction = run_triton_inderence()
-    print(prediction)
+    run_triton_inderence()

@@ -63,7 +63,7 @@ def main(cfg: DictConfig):
             name=cfg.artefacts.experiment_name
         ),
         WandbLogger(
-            project="mlops-logging-demo", 
+            project="mlops-vm-train-experiments", 
             name=f"{cfg.artefacts.experiment_name}-{date}",
             log_model='all'
         )
