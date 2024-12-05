@@ -6,6 +6,7 @@
 import torch
 import datasets
 import pytorch_lightning as pl
+import random
 
 from datasets import load_dataset
 from transformers import AutoTokenizer
@@ -31,6 +32,14 @@ class MyDataModule(pl.LightningDataModule):
         dataset = load_dataset("glue", "cola") #? dataset name could be hydra parametr, also it could be class constructor parametr
         self.train_dataset = dataset["train"]
         self.validation_dataset = dataset["validation"]
+
+        features = dataset['train'].features
+        if 'label' in features:
+            label_names = features['label'].names
+            label_mapping = {i: name for i, name in enumerate(label_names)}
+            self.idx2label = label_mapping
+        else:
+            self.idx2label = None
     
     '''
     Модель принимает на вход батчи последовательностей токенов.
@@ -86,3 +95,15 @@ class MyDataModule(pl.LightningDataModule):
         return torch.utils.data.DataLoader(self.validation_dataset,
                                            batch_size=self.batch_size,
                                            shuffle=False)
+    
+    def sample_random_items(self, items_num=1):
+        dataloader = self.val_dataloader
+        # Сбор всех данных в список
+        all_sentences = []
+        for batch in dataloader:
+            all_sentences.extend(batch)  # Добавляем батчи в общий список
+
+        # Сэмплирование случайных предложений
+        num_samples = 3  # Количество случайных предложений
+        random_samples = random.sample(all_sentences, num_samples)
+        return random_samples

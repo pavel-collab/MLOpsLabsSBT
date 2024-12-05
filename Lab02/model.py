@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 import torch.nn.functional as F
 
 from transformers import AutoModel
-from sklearn.metrics import accuracy_score #TODO: добавить еще метрик для логгирования
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 class MyModel(pl.LightningModule):
     '''
@@ -72,9 +72,20 @@ class MyModel(pl.LightningModule):
         все компоненты расчета на один девайс.
         '''
         validation_accuracy = accuracy_score(preds.cpu(), batch["label"].cpu())
+        validation_precision = precision_score(preds.cpu(), batch["label"].cpu())
+        validation_recall = recall_score(preds.cpu(), batch["label"].cpu())
+        validation_f1_micro = f1_score(preds.cpu(), batch["label"].cpu(), average='micro')
+
         validation_accuracy = torch.tensor(validation_accuracy)
+        validation_precision = torch.tensor(validation_precision)
+        validation_recall = torch.tensor(validation_recall)
+        validation_f1_micro = torch.tensor(validation_f1_micro)
+
         self.log("validation_loss", loss, prog_bar=True)
         self.log("validation_accuracy", validation_accuracy, prog_bar=True)
+        self.log("validation_precision", validation_precision, prog_bar=True)
+        self.log("validation_recall", validation_recall, prog_bar=True)
+        self.log("validation_f1_micro", validation_f1_micro, prog_bar=True)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.hparams["lr"], weight_decay=self.hparams["weight_decay"])
