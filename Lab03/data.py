@@ -110,3 +110,6 @@ class MyDataModule(pl.LightningDataModule):
                        'label': int(random_batch['label'][random_sentence_idx])}
 
         return random_item
+    
+    def get_tokenizer(self):
+        return self.tokenizer

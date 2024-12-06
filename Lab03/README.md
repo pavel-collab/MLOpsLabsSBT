@@ -51,3 +51,17 @@ sudo systemctl restart docker
 ```
 python3 client.py
 ```
+
+### Работа с TensorRT
+
+Скачиваем необходимый докер-контейнер
+```
+docker pull nvcr.io/nvidia/tensorrt:23.12-py3
+```
+
+Запускаем его и подключаемся (прокидываем нужную дерикторию с моделями)
+```
+docker run -it --rm --gpus '"device=2"' -v ./models:/models nvcr.io/nvidia/tensorrt:23.12-py3
+```
+
+Ура, ура, можно запускать скрипт для конвертации моделей в tensorrt.

@@ -24,6 +24,9 @@ def convert_model(cfg):
     data.prepare_data()
     data.setup()
 
+    # save tokenizer
+    data.get_tokenizer().save_pretrained("./assets/tokenizer")
+
     input_batch = next(iter(data.train_dataloader()))
     
     input_sample = {
