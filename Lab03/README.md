@@ -61,7 +61,12 @@ docker pull nvcr.io/nvidia/tensorrt:23.12-py3
 
 Запускаем его и подключаемся (прокидываем нужную дерикторию с моделями)
 ```
-docker run -it --rm --gpus '"device=2"' -v ./models:/models nvcr.io/nvidia/tensorrt:23.12-py3
+mkdir models
+cp model.onnx models
+docker run -it --rm --gpus=all -v ./models:/models nvcr.io/nvidia/tensorrt:23.12-py3
 ```
 
-Ура, ура, можно запускать скрипт для конвертации моделей в tensorrt.
+Ура, ура, можно запускать скрипт для конвертации моделей в tensorrt. Запускаем скрипт
+```
+./onnx2tensorrt.sh
+```

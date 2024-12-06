@@ -16,7 +16,6 @@ trtexec --onnx=model.onnx \
 --optShapes=input:8 \
 --maxShapes=input:8 \
 --inputIOFormats=fp32:chw \
---fp32 \
 --profilingVerbosity=detailed \
 --builderOptimizationLevel=5
 
