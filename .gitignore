@@ -11,3 +11,4 @@ wandb
 train.log
 outputs
 *.onnx
+*.plan
