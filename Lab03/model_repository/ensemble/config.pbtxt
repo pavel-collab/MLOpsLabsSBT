@@ -1,0 +1,76 @@
+name: "ensemble"
+platform: "ensemble"
+
+input [
+    {
+        name: "TEXTS"
+        data_type: TYPE_STRING
+        dims: [ -1 ]
+    }
+]
+
+output [
+    {
+        name: "RESULT-ONNX"
+        data_type: TYPE_FP32
+        dims: [ 96 ]
+    },
+    {
+        name: "RESULT-TRT"
+        data_type: TYPE_FP32
+        dims: [ 96 ]
+    }
+]
+
+ensemble_scheduling {
+    step [
+        {
+            model_name: "tokenizer"
+            model_version: -1
+            input_map {
+                key: "TEXTS"
+                value: "TEXTS"
+            }
+            output_map {
+                key: "INPUT_IDS"
+                value: "INPUT_IDS"
+            }
+            output_map {
+                key: "ATTENTION_MASK"
+                value: "ATTENTION_MASK"
+            }
+        },
+        {
+            model_name: "onnx-bert-uncased"
+            model_version: -1
+            input_map {
+                key: "input_ids"
+                value: "INPUT_IDS"
+            }
+            input_map {
+                key: "attention_mask"
+                value: "ATTENTION_MASK"
+            }
+            output_map {
+                key: "EMBEDDINGS"
+                value: "RESULT-ONNX"
+            }
+        },
+        {
+            model_name: "embedder-trt"
+            model_version: -1
+            input_map {
+                key: "input_ids"
+                value: "INPUT_IDS"
+            }
+            input_map {
+                key: "attention_mask"
+                value: "ATTENTION_MASK"
+            }
+            output_map {
+                key: "EMBEDDINGS"
+                value: "RESULT-TRT"
+            }
+        }
+    ]
+}
