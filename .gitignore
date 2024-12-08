@@ -12,3 +12,4 @@ train.log
 outputs
 *.onnx
 *.plan
+model_repository_old

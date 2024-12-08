@@ -44,7 +44,7 @@ def convert_model(cfg):
             tokens_tensor,
             attention_mask,
         ),  # model input (or a tuple for multiple inputs)
-        f"{root_dir}/model.onnx",  # where to save the model (can be a file or file-like object)
+        f"{root_dir}/models/model.onnx",  # where to save the model (can be a file or file-like object)
         export_params=True,
         opset_version=14,
         input_names=["input_ids", "attention_mask"],  # the model's input names
@@ -63,7 +63,7 @@ def convert_model(cfg):
             "input_ids": tokens_tensor.numpy(),
             "attention_mask": attention_mask.numpy()
         }
-        ort_session = ort.InferenceSession("./model.onnx")
+        ort_session = ort.InferenceSession("./models/model.onnx")
         onnx_embeddings = ort_session.run(None, ort_inputs)[0]
 
         assert np.allclose(original_embeddings, onnx_embeddings)
