@@ -10,6 +10,7 @@ python3 train.py
 
 Для преобразования модели запустите скрипт
 ```
+mkdir models
 python3 convert_model_to_onnx.py
 ```
 В результате в корневой дериктории лабы должен появиться файл __model.onnx__.
